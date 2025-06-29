@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyson_Owner - Modded Apps</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: white;
+      min-height: 100vh;
+      padding-bottom: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Login Overlay Styles */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 30, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: all 0.5s ease;
+    }
+
+    .login-container {
+      background: rgba(30, 30, 50, 0.8);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(100, 100, 200, 0.3);
+    }
+
+    .login-container h2 {
+      margin-bottom: 20px;
+      color: #00bfff;
+      text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    }
+
+    .password-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 12px 45px 12px 15px;
+      border-radius: 30px;
+      border: 2px solid #00bfff;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .password-input:focus {
+      border-color: #ff00cc;
+      box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #00bfff;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(to right, #00c6ff, #ff00cc);
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 0, 204, 0.4);
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      margin-top: 10px;
+      height: 20px;
+      font-size: 14px;
+    }
+
+    .purchase-info {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 20px;
+      border-left: 4px solid #ff00cc;
+    }
+
+    .purchase-info h3 {
+      color: #ff7eb3;
+      margin-bottom: 10px;
+    }
+
+    .contact-number {
+      display: inline-block;
+      background: linear-gradient(to right, #ff7eb3, #ff758c);
+      padding: 8px 15px;
+      border-radius: 30px;
+      font-weight: bold;
+      margin: 10px 0;
+      box-shadow: 0 4px 8px rgba(255, 126, 179, 0.3);
+    }
+
+    .features-list {
+      text-align: left;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .features-list li {
+      margin-bottom: 8px;
+      color: #a0a0ff;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      display: none; /* Initially hidden */
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(10, 10, 30, 0.85);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .header h1 {
+      color: #00bfff;
+      font-size: 1.4rem;
+      text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+    }
+
+    .header button {
+      background: linear-gradient(to right, #00c6ff, #ff00cc);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .header button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 0, 204, 0.4);
+    }
+
+    .main-title {
+      text-align: center;
+      padding: 20px 15px 10px;
+      font-size: 1.1rem;
+      color: #e0e0ff;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      padding: 15px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(30, 30, 50, 0.4);
+      border-radius: 15px;
+      text-align: center;
+      padding: 15px 10px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(100, 100, 200, 0.2);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .card img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin: 0 auto 10px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 5px;
+      display: block;
+    }
+
+    .card h3 {
+      margin: 5px 0;
+      color: white;
+      font-size: 1rem;
+      height: 2.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .free {
+      color: #00ff9d;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+      font-size: 0.9rem;
+      margin: 5px 0;
+    }
+
+    .download-btn {
+      margin-top: 8px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(to right, #ff7eb3, #ff758c);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 0.85rem;
+      width: 90%;
+      max-width: 120px;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 126, 179, 0.4);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px 15px 15px;
+      background: rgba(10, 10, 30, 0.85);
+      margin-top: 20px;
+      border-top: 1px solid rgba(100, 100, 200, 0.2);
+    }
+
+    .footer p {
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      color: #a0a0ff;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-icons a {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .social-icons a:hover {
+      transform: scale(1.15);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .social-icons i {
+      font-size: 1.4rem;
+      color: white;
+    }
+
+    .youtube-icon { color: #FF0000; }
+    .telegram-icon { color: #0088cc; }
+    .instagram-icon { 
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .login-container {
+        padding: 20px;
+        width: 95%;
+      }
+      
+      .header {
+        padding: 12px 15px;
+      }
+      
+      .header h1 {
+        font-size: 1.2rem;
+      }
+      
+      .header button {
+        padding: 7px 15px;
+        font-size: 0.8rem;
+      }
+      
+      .main-title {
+        font-size: 0.95rem;
+        padding: 15px 12px 8px;
+      }
+      
+      .container {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+        padding: 12px;
+      }
+      
+      .card {
+        padding: 12px 8px;
+      }
+      
+      .card img {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .card h3 {
+        font-size: 0.9rem;
+        height: 2.4em;
+      }
+      
+      .free {
+        font-size: 0.8rem;
+      }
+      
+      .download-btn {
+        padding: 7px 12px;
+        font-size: 0.8rem;
+      }
+      
+      .social-icons a {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .social-icons i {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .card img {
+        width: 45px;
+        height: 45px;
+      }
+      
+      .purchase-info {
+        padding: 12px;
+      }
+    }
+
+    /* App icons styling */
+    .app-icon {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 1.8rem;
+      color: white;
+    }
+
+    .whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+    .fampay { background: linear-gradient(135deg, #6A11CB, #2575FC); }
+    .phonepe { background: linear-gradient(135deg, #5F2BEE, #B24592); }
+    .funsta { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
+    .bhimpay { background: linear-gradient(135deg, #0F9D58, #4285F4); }
+    .location { background: linear-gradient(135deg, #00B4DB, #0083B0); }
+    .gpay { background: linear-gradient(135deg, #34A853, #0F9D58); }
+    .paytm { background: linear-gradient(135deg, #002970, #00B9F1); }
+    .superpay { background: linear-gradient(135deg, #FFD700, #FFA500); }
+    .tyson { background: linear-gradient(135deg, #8A2387, #E94057, #F27121); }
+  </style>
+</head>
+<body>
+
+  <!-- Login Overlay -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-container">
+      <h2>Enter Password to Access</h2>
+      <div class="password-container">
+        <input type="password" id="passwordInput" class="password-input" placeholder="Enter password...">
+        <span class="toggle-password" id="togglePassword">
+          <i class="fas fa-eye"></i>
+        </span>
+      </div>
+      <button class="login-btn" id="loginBtn">Login</button>
+      <div class="error-message" id="errorMessage"></div>
+      
+      <div class="purchase-info">
+        <h3>Need Password?</h3>
+        <p>Agar appko iska password chahiye to iss no. pe call ya message karo:</p>
+        <div class="contact-number">9060766153</div>
+        <p>Purchase Rs 499 for all spoof:</p>
+        <ul class="features-list">
+          <li>PhonePe</li>
+          <li>Google Pay</li>
+          <li>Paytm</li>
+          <li>WhatsApp</li>
+          <li>And all spoof apps</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content (hidden until login) -->
+  <div class="main-content" id="mainContent">
+    <div class="header">
+      <h1>Tyson_Owner</h1>
+      <button>The Unknown</button>
+    </div>
+
+    <div class="main-title">
+      Download the latest modded apps by @Tyson_owner. All apps are free and regularly updated.
+    </div>
+
+    <div class="container">
+      <!-- WhatsApp -->
+      <div class="card">
+        <div class="app-icon whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </div>
+        <h3>WhatsApp</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/j2sdx" class="download-btn">Download</a>
+      </div>
+
+      <!-- Fampay -->
+      <div class="card">
+        <div class="app-icon fampay">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <h3>Fampay</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/ZX6HY" class="download-btn">Download</a>
+      </div>
+
+      <!-- PhonePe 2 -->
+      <div class="card">
+        <div class="app-icon phonepe">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        <h3>PhonePay 2</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/1VoqL" class="download-btn">Download</a>
+      </div>
+
+      <!-- Funsta -->
+      <div class="card">
+        <div class="app-icon funsta">
+          <i class="fas fa-camera"></i>
+        </div>
+        <h3>Funsta</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/MpkCL" class="download-btn">Download</a>
+      </div>
+
+      <!-- BhimPay -->
+      <div class="card">
+        <div class="app-icon bhimpay">
+          <i class="fas fa-rupee-sign"></i>
+        </div>
+        <h3>BhimPay</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/182qa" class="download-btn">Download</a>
+      </div>
+
+      <!-- Location Master -->
+      <div class="card">
+        <div class="app-icon location">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <h3>Location Master</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/jJ6dT" class="download-btn">Download</a>
+      </div>
+
+      <!-- Gpay -->
+      <div class="card">
+        <div class="app-icon gpay">
+          <i class="fab fa-google"></i>
+        </div>
+        <h3>Gpay</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/50nvZ" class="download-btn">Download</a>
+      </div>
+
+      <!-- Paytm -->
+      <div class="card">
+        <div class="app-icon paytm">
+          <i class="fas fa-qrcode"></i>
+        </div>
+        <h3>Paytm</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/SmfTw" class="download-btn">Download</a>
+      </div>
+      
+      <!-- SUPER PAY -->
+      <div class="card">
+        <div class="app-icon superpay">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Super Pay</h3>
+        <div class="free">FREE</div>
+        <a href="https://sub2unlock.io/npGfF" class="download-btn">Download</a>
+      </div>
+      
+      <!-- TYSON -->
+      <div class="card">
+        <div class="app-icon tyson">
+          <i class="fas fa-crown"></i>
+        </div>
+        <h3>TYSON</h3>
+        <div class="free">FREE</div>
+        <a href="https://t.me/+kFhnhnlONOszMmNl" class="download-btn">Download</a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 Tyson_Owner - All Rights Reserved</p>
+      <div class="social-icons">
+        <a href="#" class="youtube"><i class="fab fa-youtube youtube-icon"></i></a>
+        <a href="#"><i class="fab fa-telegram telegram-icon"></i></a>
+        <a href="#"><i class="fab fa-instagram instagram-icon"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Password validation and login functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginOverlay = document.getElementById('loginOverlay');
+      const mainContent = document.getElementById('mainContent');
+      const passwordInput = document.getElementById('passwordInput');
+      const loginBtn = document.getElementById('loginBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      const togglePassword = document.getElementById('togglePassword');
+      
+      // Correct password
+      const correctPassword = "TYSON";
+      
+      // Toggle password visibility
+      togglePassword.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+        } else {
+          passwordInput.type = 'password';
+          this.innerHTML = '<i class="fas fa-eye"></i>';
+        }
+      });
+      
+      // Login functionality
+      loginBtn.addEventListener('click', function() {
+        const enteredPassword = passwordInput.value;
+        
+        if (enteredPassword === correctPassword) {
+          // Hide login overlay and show main content
+          loginOverlay.style.opacity = '0';
+          loginOverlay.style.pointerEvents = 'none';
+          mainContent.style.display = 'block';
+          
+          // Store login status in localStorage
+          localStorage.setItem('isLoggedIn', 'true');
+        } else {
+          // Show error message
+          errorMessage.textContent = 'Incorrect password! Please try again.';
+          passwordInput.style.borderColor = '#ff6b6b';
+          
+          // Shake animation for error
+          passwordInput.animate([
+            { transform: 'translateX(0)' },
+            { transform: 'translateX(-5px)' },
+            { transform: 'translateX(5px)' },
+            { transform: 'translateX(0)' }
+          ], {
+            duration: 300,
+            iterations: 2
+          });
+          
+          // Clear input and focus
+          setTimeout(() => {
+            passwordInput.value = '';
+            passwordInput.focus();
+          }, 500);
+        }
+      });
+      
+      // Allow login with Enter key
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          loginBtn.click();
+        }
+      });
+      
+      // Check if user is already logged in
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        loginOverlay.style.display = 'none';
+        mainContent.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
